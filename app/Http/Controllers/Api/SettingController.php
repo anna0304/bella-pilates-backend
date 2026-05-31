@@ -10,8 +10,7 @@ class SettingController extends Controller
 {
     public function index()
     {
-        $settings = Setting::all()
-            ->pluck('value', 'key');
+        $settings = Setting::all()->pluck('value', 'key');
 
         return response()->json([
             'status' => 'success',
@@ -25,20 +24,20 @@ class SettingController extends Controller
             'business_name' => 'sometimes|string|max:255',
             'phone' => 'sometimes|string|max:50',
             'email' => 'sometimes|email|max:255',
-            'instagram' => 'sometimes|string|max:255',
+            'instagram' => 'sometimes|nullable|string|max:255',
             'address' => 'sometimes|string|max:255',
-            'opening_hours' => 'sometimes|string|max:255',
-            'footer_text' => 'sometimes|string|max:500',
+            'opening_hours' => 'sometimes|nullable|string|max:255',
+            'footer_text' => 'sometimes|nullable|string|max:500',
         ]);
 
         foreach ($validated as $key => $value) {
-            Setting::where('key', $key)->update([
-                'value' => $value,
-            ]);
+            Setting::updateOrCreate(
+                ['key' => $key],
+                ['value' => $value]
+            );
         }
 
-        $settings = Setting::all()
-            ->pluck('value', 'key');
+        $settings = Setting::all()->pluck('value', 'key');
 
         return response()->json([
             'status' => 'success',

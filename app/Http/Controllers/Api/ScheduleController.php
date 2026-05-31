@@ -8,10 +8,20 @@ use Illuminate\Http\Request;
 
 class ScheduleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $schedules = Schedule::with('class')
-            ->where('is_active', true)
+        $query = Schedule::with('class')
+            ->withCount([
+                'reservations as reservations_count' => function ($query) {
+                    $query->where('status', 'confirmed');
+                },
+            ]);
+
+        if (!$request->user() || $request->user()->role !== 'admin') {
+            $query->where('is_active', true);
+        }
+
+        $schedules = $query
             ->orderBy('day_of_week')
             ->orderBy('start_time')
             ->get();
@@ -25,6 +35,11 @@ class ScheduleController extends Controller
     public function show($id)
     {
         $schedule = Schedule::with('class')
+            ->withCount([
+                'reservations as reservations_count' => function ($query) {
+                    $query->where('status', 'confirmed');
+                },
+            ])
             ->where('is_active', true)
             ->find($id);
 
@@ -53,6 +68,12 @@ class ScheduleController extends Controller
         ]);
 
         $schedule = Schedule::create($validated);
+        $schedule->load('class');
+        $schedule->loadCount([
+            'reservations as reservations_count' => function ($query) {
+                $query->where('status', 'confirmed');
+            },
+        ]);
 
         return response()->json([
             'status' => 'success',
@@ -83,6 +104,13 @@ class ScheduleController extends Controller
         ]);
 
         $schedule->update($validated);
+
+        $schedule->load('class');
+        $schedule->loadCount([
+            'reservations as reservations_count' => function ($query) {
+                $query->where('status', 'confirmed');
+            },
+        ]);
 
         return response()->json([
             'status' => 'success',

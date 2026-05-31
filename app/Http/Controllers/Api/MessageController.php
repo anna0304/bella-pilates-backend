@@ -64,6 +64,28 @@ class MessageController extends Controller
         ]);
     }
 
+    public function markAsUnread($id)
+    {
+        $message = Message::find($id);
+
+        if (!$message) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Mensaje no encontrado',
+            ], 404);
+        }
+
+        $message->update([
+            'status' => 'unread',
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Mensaje marcado como no leído',
+            'data' => $message,
+        ]);
+    }
+
     public function archive($id)
     {
         $message = Message::find($id);
@@ -82,6 +104,28 @@ class MessageController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Mensaje archivado correctamente',
+            'data' => $message,
+        ]);
+    }
+
+    public function unarchive($id)
+    {
+        $message = Message::find($id);
+
+        if (!$message) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Mensaje no encontrado',
+            ], 404);
+        }
+
+        $message->update([
+            'status' => 'read',
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Mensaje restaurado correctamente',
             'data' => $message,
         ]);
     }

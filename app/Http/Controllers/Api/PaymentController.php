@@ -26,15 +26,14 @@ class PaymentController extends Controller
             'user_id' => 'required|exists:users,id',
             'plan_id' => 'required|exists:plans,id',
             'amount' => 'required|numeric|min:0',
-            'payment_method' => 'required|string|max:100',
-            'status' => 'required|in:pending,paid',
+            'payment_method' => 'required|in:cash,card,bizum,bank_transfer',
+            'status' => 'required|in:pending,paid,failed,refunded',
             'transaction_id' => 'nullable|string|max:255',
-            'starts_at' => 'nullable|date',
-            'expires_at' => 'nullable|date|after_or_equal:starts_at',
+            'starts_at' => 'required|date',
+            'expires_at' => 'required|date|after_or_equal:starts_at',
         ]);
 
         $payment = Payment::create($validated);
-
         $payment->load(['user', 'plan']);
 
         return response()->json([
@@ -47,7 +46,7 @@ class PaymentController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $validated = $request->validate([
-            'status' => 'required|in:pending,paid',
+            'status' => 'required|in:pending,paid,failed,refunded',
         ]);
 
         $payment = Payment::find($id);

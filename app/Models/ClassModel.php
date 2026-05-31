@@ -18,6 +18,7 @@ class ClassModel extends Model
         'max_capacity',
         'image',
         'is_active',
+        'instructor_name',
     ];
 
     /**

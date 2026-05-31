@@ -22,6 +22,19 @@ class RecordedClassController extends Controller
         ]);
     }
 
+    public function adminIndex()
+    {
+        $recordedClasses = RecordedClass::with('class')
+            ->orderByDesc('featured')
+            ->orderByDesc('created_at')
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $recordedClasses,
+        ]);
+    }
+
     public function show($id)
     {
         $recordedClass = RecordedClass::with('class')
