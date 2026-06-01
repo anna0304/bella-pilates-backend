@@ -153,6 +153,28 @@ class ClassController extends Controller
         ]);
     }
 
+    public function activate($id): JsonResponse
+    {
+        $class = ClassModel::find($id);
+
+        if (!$class) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Clase no encontrada',
+            ], 404);
+        }
+
+        $class->update([
+            'is_active' => true,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Clase activada correctamente',
+            'data' => $this->formatClass($class),
+        ]);
+    }
+
     private function formatClass(ClassModel $class): array
     {
         $data = $class->toArray();

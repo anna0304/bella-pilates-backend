@@ -85,10 +85,11 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::patch('/users/{user}/reset-password', [UserController::class, 'resetPassword']);
 
     // Clases
-    Route::get('/classes', [ClassController::class, 'index']);
+    Route::get('/classes', [ClassController::class, 'adminindex']);
     Route::post('/classes', [ClassController::class, 'store']);
     Route::put('/classes/{class}', [ClassController::class, 'update']);
     Route::patch('/classes/{class}/deactivate', [ClassController::class, 'deactivate']);
+    Route::patch('/classes/{id}/activate', [ClassController::class, 'activate']);
 
     // Horarios
     Route::get('/schedules', [ScheduleController::class, 'index']);
